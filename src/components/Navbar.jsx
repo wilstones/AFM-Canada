@@ -20,8 +20,7 @@ function Navbar({ user, setUser }) {
       <nav className="navbar">
         <div className="nav-container">
           <Link to="/" className="logo">
-            <img src="/afm-logo.png" alt="AFM in Canada Logo" className="logo-image" />
-            <span>AFM in Canada</span>
+          <img src={`${import.meta.env.BASE_URL}afm-logo.png`} alt="AFM in Canada Logo" className="logo-image" />            <span>AFM in Canada</span>
           </Link>
 
           <button

@@ -36,8 +36,7 @@ function AdminLogin({ setUser }) {
       <div className="login-container">
         <div className="login-card">
           <div className="login-header">
-            <img src="/afm-logo.png" alt="AFM in Canada Logo" className="login-logo" />
-            <h1>Admin Dashboard</h1>
+		<img src={`${import.meta.env.BASE_URL}afm-logo.png`} alt="AFM in Canada Logo" className="login-logo" />            <h1>Admin Dashboard</h1>
             <p>Sign in to manage your church website</p>
           </div>
 
