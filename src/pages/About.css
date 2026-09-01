@@ -1,0 +1,156 @@
+.about-page {
+  padding-top: 80px;
+  min-height: 100vh;
+}
+
+.about-header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  padding: 5rem 2rem;
+  text-align: center;
+}
+
+.about-header h1 {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.about-header p {
+  font-size: 1.25rem;
+  color: var(--light);
+}
+
+.about-container {
+  padding: 4rem 2rem;
+  max-width: 1200px;
+}
+
+.about-section {
+  margin-bottom: 5rem;
+}
+
+.about-section h2 {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  color: var(--primary);
+  text-align: center;
+}
+
+.about-section p {
+  font-size: 1.15rem;
+  line-height: 1.8;
+  color: var(--text-light);
+  margin-bottom: 1.5rem;
+}
+
+.beliefs-grid, .vision-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.belief-card, .vision-card {
+  background: var(--light);
+  padding: 2rem;
+  border-radius: 15px;
+  transition: all 0.3s;
+}
+
+.belief-card:hover, .vision-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.belief-card h3, .vision-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--primary);
+}
+
+.belief-card p, .vision-card p {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.scripture-section {
+  background: var(--light);
+  padding: 4rem 3rem;
+  border-radius: 20px;
+  text-align: center;
+}
+
+.scripture-section blockquote {
+  font-family: 'Crimson Pro', serif;
+  font-size: 1.5rem;
+  font-style: italic;
+  line-height: 1.8;
+  color: var(--text-dark);
+  border: none;
+  padding: 0;
+  margin: 2rem 0;
+}
+
+.scripture-section cite {
+  display: block;
+  margin-top: 1.5rem;
+  font-size: 1.25rem;
+  color: var(--primary);
+  font-style: normal;
+  font-weight: 600;
+}
+
+.cta-section {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  padding: 4rem 3rem;
+  border-radius: 20px;
+  text-align: center;
+}
+
+.cta-section h2 {
+  color: white;
+}
+
+.cta-section p {
+  color: var(--light);
+  font-size: 1.25rem;
+  max-width: 700px;
+  margin: 0 auto 2rem;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .about-header h1 {
+    font-size: 2.5rem;
+  }
+
+  .about-section h2 {
+    font-size: 2rem;
+  }
+
+  .beliefs-grid, .vision-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .scripture-section blockquote {
+    font-size: 1.25rem;
+  }
+
+  .cta-buttons {
+    flex-direction: column;
+  }
+
+  .cta-buttons .btn-primary,
+  .cta-buttons .btn-secondary {
+    width: 100%;
+  }
+}
