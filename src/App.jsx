@@ -27,7 +27,7 @@ function App() {
   }, []);
 
   return (
-    <Router>
+   <Router basename="/AFM-Canada">
       <div className="app">
         <Navbar user={user} setUser={setUser} />
         <Routes>
