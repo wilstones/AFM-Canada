@@ -19,7 +19,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><path d="M0,400 Q300,200 600,400 T1200,400 L1200,800 L0,800 Z" fill="rgba(139,69,19,0.05)"/></svg>');
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><path d="M0,400 Q300,200 600,400 T1200,400 L1200,800 L0,800 Z" fill="rgba(12,74,124,0.05)"/></svg>');
   background-size: cover;
   background-position: bottom;
 }
@@ -54,45 +54,102 @@
   gap: 1rem;
 }
 
-.btn-primary, .btn-secondary {
-  padding: 1rem 2.5rem;
-  border-radius: 50px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s;
-  border: none;
-  font-size: 1rem;
-  text-decoration: none;
-  display: inline-block;
-}
-
-.btn-primary {
-  background: var(--primary);
-  color: white;
-}
-
-.btn-primary:hover {
-  background: var(--primary-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(139, 69, 19, 0.3);
-}
-
-.btn-secondary {
-  background: transparent;
-  color: var(--primary);
-  border: 2px solid var(--primary);
-}
-
-.btn-secondary:hover {
-  background: var(--primary);
-  color: white;
-}
-
 .hero-image img {
   width: 100%;
   height: auto;
   border-radius: 20px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+
+/* Theme Scripture Section */
+.theme-scripture-section {
+  padding: 5rem 2rem;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  text-align: center;
+}
+
+.theme-badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.15);
+  color: var(--accent);
+  padding: 0.5rem 1.5rem;
+  border-radius: 50px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.theme-scripture-section .section-title {
+  color: white;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.theme-scripture-section .section-subtitle {
+  color: var(--accent);
+}
+
+.scripture-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  max-width: 1100px;
+  margin: 0 auto 3rem;
+  text-align: left;
+}
+
+.scripture-card {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 15px;
+  padding: 2rem;
+}
+
+.scripture-reference {
+  font-family: 'Crimson Pro', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+
+.scripture-card p {
+  font-style: italic;
+  line-height: 1.8;
+  color: rgba(255,255,255,0.9);
+}
+
+.theme-video {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.theme-video h3 {
+  color: white;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.video-wrapper {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  border-radius: 15px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+
+.video-wrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
 }
 
 /* Mission Section */
@@ -330,6 +387,14 @@
 
   .section-title {
     font-size: 2rem;
+  }
+
+  .theme-scripture-section {
+    padding: 3rem 1.5rem;
+  }
+
+  .scripture-card {
+    padding: 1.5rem;
   }
 
   .blog-grid {

@@ -53,7 +53,13 @@ const blogSchema = new mongoose.Schema({
   imageUrl: {
     type: String,
     default: ''
-  }
+  },
+  reactions: {
+    like: { type: Number, default: 0 },
+    love: { type: Number, default: 0 },
+    pray: { type: Number, default: 0 },
+    amen: { type: Number, default: 0 }
+  },
 }, {
   timestamps: true
 });

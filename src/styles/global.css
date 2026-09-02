@@ -5,13 +5,13 @@
 }
 
 :root {
-  --primary: #8B4513;
-  --primary-dark: #5D2E0C;
-  --accent: #D4A574;
-  --light: #F5EFE6;
+  --primary: #0c4a7c;
+  --primary-dark: #05233d;
+  --accent: #b8860b;
+  --light: #edf4fb;
   --white: #FFFFFF;
-  --text-dark: #2C1810;
-  --text-light: #6B5B4F;
+  --text-dark: #0a2a43;
+  --text-light: #4f6b82;
   --success: #4CAF50;
   --error: #f44336;
   --warning: #ff9800;
@@ -194,24 +194,6 @@ button {
   font-weight: 600;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .container {
-    padding: 0 1rem;
-  }
-
-  .rich-text h1 {
-    font-size: 2rem;
-  }
-
-  .rich-text h2 {
-    font-size: 1.5rem;
-  }
-
-  .rich-text p {
-    font-size: 1rem;
-  }
-}
 .btn-primary, .btn-secondary {
   padding: 1rem 2.5rem;
   border-radius: 50px;
@@ -233,7 +215,7 @@ button {
 .btn-primary:hover {
   background: var(--primary-dark);
   transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(139, 69, 19, 0.3);
+  box-shadow: 0 10px 30px rgba(12, 74, 124, 0.3);
 }
 
 .btn-primary:disabled {
@@ -251,4 +233,23 @@ button {
 .btn-secondary:hover {
   background: var(--primary);
   color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem;
+  }
+
+  .rich-text h1 {
+    font-size: 2rem;
+  }
+
+  .rich-text h2 {
+    font-size: 1.5rem;
+  }
+
+  .rich-text p {
+    font-size: 1rem;
+  }
 }

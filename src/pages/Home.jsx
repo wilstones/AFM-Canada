@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { blogAPI, eventAPI } from '../utils/api';
 import DonateModal from '../components/DonateModal';
 import './Home.css';
+import HeroSlider from '../components/HeroSlider';
 
 function Home() {
   const [featuredBlogs, setFeaturedBlogs] = useState([]);
@@ -51,14 +52,46 @@ function Home() {
               <Link to="/events" className="btn-secondary">Upcoming Events</Link>
             </div>
           </div>
-          <div className="hero-image fade-in">
-            <img 
-              src="https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=800&h=600&fit=crop" 
-              alt="Church Community"
-              onError={(e) => {
-                e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="800" height="600"%3E%3Crect fill="%23D4A574" width="800" height="600"/%3E%3Ctext x="50%25" y="50%25" font-size="48" fill="white" text-anchor="middle" dy=".3em"%3EAFM Community%3C/text%3E%3C/svg%3E';
-              }}
-            />
+<div className="hero-image fade-in">
+  <HeroSlider />
+</div>
+        </div>
+      </section>
+
+      {/* Theme Scripture for the Year */}
+      <section className="theme-scripture-section">
+        <div className="container">
+          <div className="theme-badge">2026 Theme</div>
+          <h2 className="section-title">The Year of Breaking Boundaries and Obtaining Increase</h2>
+          <p className="section-subtitle">Our Theme Scripture</p>
+
+          <div className="scripture-cards">
+            <div className="scripture-card">
+              <div className="scripture-reference">Genesis 26:12-14</div>
+              <p>
+                "And Isaac sowed in that land and reaped in the same year a hundredfold. The Lord blessed him, and the man became rich, and gained more and more until he became very wealthy. He had possessions of flocks and herds and many servants, so that the Philistines envied him."
+              </p>
+            </div>
+
+            <div className="scripture-card">
+              <div className="scripture-reference">Luke 5:4-7</div>
+              <p>
+                "Getting into one of the boats, which was Simon's, he asked him to put out a little from the land. And he sat down and taught the people from the boat. And when he had finished speaking, he said to Simon, 'Put out into the deep and let down your nets for a catch.' And Simon answered, 'Master, we toiled all night and took nothing! But at your word I will let down the nets.' And when they had done this, they enclosed a large number of fish, and their nets were breaking. They signaled to their partners in the other boat to come and help them. And they came and filled both the boats, so that they began to sink."
+              </p>
+            </div>
+          </div>
+
+          <div className="theme-video">
+            <h3>Watch the Message</h3>
+            <div className="video-wrapper">
+              <iframe
+                src="https://www.youtube.com/embed/7XOdKKARSnM"
+                title="Theme Scripture Sermon"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              ></iframe>
+            </div>
           </div>
         </div>
       </section>

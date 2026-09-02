@@ -1,7 +1,12 @@
 import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-
+export const getImageUrl = (imageUrl) => {
+  if (!imageUrl) return '';
+  if (imageUrl.startsWith('http')) return imageUrl; // already absolute
+  const origin = API_URL.replace(/\/api\/?$/, '');
+  return `${origin}${imageUrl}`;
+};
 const api = axios.create({
   baseURL: API_URL,
   headers: {
@@ -42,7 +47,8 @@ export const blogAPI = {
   create: (data) => api.post('/blogs', data),
   update: (id, data) => api.put(`/blogs/${id}`, data),
   delete: (id) => api.delete(`/blogs/${id}`),
-  togglePublish: (id) => api.patch(`/blogs/${id}/toggle-publish`)
+  togglePublish: (id) => api.patch(`/blogs/${id}/toggle-publish`),
+  react: (id, type) => api.patch(`/blogs/${id}/react`, { type })
 };
 
 export const eventAPI = {
@@ -63,5 +69,11 @@ export const memberAPI = {
   getAll: (params) => api.get('/members', { params }),
   updateStatus: (id, status) => api.patch(`/members/${id}/status`, { status }),
   delete: (id) => api.delete(`/members/${id}`)
+};
+export const userAPI = {
+  getAll: () => api.get('/users'),
+  create: (data) => api.post('/users', data),
+  toggleActive: (id) => api.patch(`/users/${id}/toggle-active`),
+  delete: (id) => api.delete(`/users/${id}`)
 };
 export default api;

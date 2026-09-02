@@ -83,6 +83,43 @@ router.get('/:slug', async (req, res) => {
     });
   }
 });
+// Add a reaction to a blog post (Public, no auth needed)
+router.patch('/:id/react', async (req, res) => {
+  try {
+    const { type } = req.body;
+    const validTypes = ['like', 'love', 'pray', 'amen'];
+
+    if (!validTypes.includes(type)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid reaction type'
+      });
+    }
+
+    const blog = await Blog.findByIdAndUpdate(
+      req.params.id,
+      { $inc: { [`reactions.${type}`]: 1 } },
+      { new: true }
+    );
+
+    if (!blog) {
+      return res.status(404).json({
+        success: false,
+        message: 'Blog not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: { reactions: blog.reactions }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to add reaction'
+    });
+  }
+});
 
 // Get all blogs including unpublished (Admin only)
 router.get('/admin/all', auth, async (req, res) => {

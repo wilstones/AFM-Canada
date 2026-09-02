@@ -10,7 +10,7 @@ const authRoutes = require('./routes/auth');
 const blogRoutes = require('./routes/blogs');
 const eventRoutes = require('./routes/events');
 const memberRoutes = require('./routes/members');
-
+const userRoutes = require('./routes/users');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -48,6 +48,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/blogs', blogRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/members', memberRoutes);
+app.use('/api/users', userRoutes);
 // Error Handler
 app.use((err, req, res, next) => {
   console.error(err.stack);

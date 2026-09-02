@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { blogAPI } from '../utils/api';
 import DonateModal from '../components/DonateModal';
+import ReactionBar from '../components/ReactionBar';
+import ShareMenu from '../components/ShareMenu';
 import './BlogPost.css';
 
 function BlogPost() {
@@ -72,6 +74,9 @@ function BlogPost() {
           </div>
           <h1>{blog.title}</h1>
           <p className="post-author">By {blog.author} • {blog.views} views</p>
+          <div className="post-reactions">
+            <ReactionBar blogId={blog._id} initialReactions={blog.reactions} />
+          </div>
         </div>
       </div>
 
@@ -101,36 +106,7 @@ function BlogPost() {
         <aside className="blog-post-sidebar">
           <div className="share-box">
             <h3>Share This Message</h3>
-            <div className="share-buttons">
-              <button
-                onClick={() => {
-                  const url = window.location.href;
-                  window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
-                }}
-                className="share-btn facebook"
-              >
-                f Facebook
-              </button>
-              <button
-                onClick={() => {
-                  const url = window.location.href;
-                  const text = `Check out: ${blog.title}`;
-                  window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
-                }}
-                className="share-btn twitter"
-              >
-                𝕏 Twitter
-              </button>
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText(window.location.href);
-                  alert('Link copied to clipboard!');
-                }}
-                className="share-btn copy"
-              >
-                🔗 Copy Link
-              </button>
-            </div>
+            <ShareMenu url={window.location.href} title={blog.title} />
           </div>
 
           <div className="support-box">

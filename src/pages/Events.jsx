@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-import { eventAPI } from '../utils/api';
 import './Events.css';
-
+import { eventAPI, getImageUrl } from '../utils/api';
 function Events() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -91,10 +90,10 @@ function Events() {
                   </div>
 
                   {event.imageUrl && (
-                    <div className="event-image-col">
-                      <img src={event.imageUrl} alt={event.title} />
-                    </div>
-                  )}
+  <div className="event-image-col">
+    <img src={getImageUrl(event.imageUrl)} alt={event.title} />
+  </div>
+)}
                 </div>
               );
             })}

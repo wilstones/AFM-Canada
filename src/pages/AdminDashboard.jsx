@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { authAPI, blogAPI, eventAPI, memberAPI } from '../utils/api';
-import './AdminDashboard.css';
-
+import { authAPI, blogAPI, eventAPI, memberAPI, userAPI, getImageUrl } from '../utils/api';import './AdminDashboard.css';
 const emptyEventForm = {
   title: '',
   description: '',
@@ -15,12 +13,15 @@ const emptyEventForm = {
   published: true
 };
 
+const emptyUserForm = { name: '', email: '', password: '', role: 'editor' };
+
 function AdminDashboard({ user }) {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('blogs');
   const [blogs, setBlogs] = useState([]);
   const [events, setEvents] = useState([]);
   const [members, setMembers] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
 
   // Blog form state
@@ -48,6 +49,14 @@ function AdminDashboard({ user }) {
   // Member filter state
   const [memberFilter, setMemberFilter] = useState('');
 
+  // User management state
+  const [showUserForm, setShowUserForm] = useState(false);
+  const [userForm, setUserForm] = useState(emptyUserForm);
+  const [userMessage, setUserMessage] = useState({ type: '', text: '' });
+  const [userLoading, setUserLoading] = useState(false);
+
+  const isAdmin = user?.role === 'admin';
+
   useEffect(() => {
     if (!user) {
       navigate('/admin/login');
@@ -65,14 +74,18 @@ function AdminDashboard({ user }) {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [blogsRes, eventsRes, membersRes] = await Promise.all([
+      const calls = [
         blogAPI.getAllAdmin(),
         eventAPI.getAllAdmin(),
         memberAPI.getAll()
-      ]);
-      setBlogs(blogsRes.data.data.blogs);
-      setEvents(eventsRes.data.data.events);
-      setMembers(membersRes.data.data.members);
+      ];
+      if (isAdmin) calls.push(userAPI.getAll());
+
+      const results = await Promise.all(calls);
+      setBlogs(results[0].data.data.blogs);
+      setEvents(results[1].data.data.events);
+      setMembers(results[2].data.data.members);
+      if (isAdmin && results[3]) setUsers(results[3].data.data.users);
     } catch (error) {
       console.error('Failed to fetch data:', error);
     } finally {
@@ -87,6 +100,15 @@ function AdminDashboard({ user }) {
       setMembers(res.data.data.members);
     } catch (error) {
       console.error('Failed to fetch members:', error);
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const res = await userAPI.getAll();
+      setUsers(res.data.data.users);
+    } catch (error) {
+      console.error('Failed to fetch users:', error);
     }
   };
 
@@ -207,8 +229,7 @@ function AdminDashboard({ user }) {
       featured: event.featured,
       published: event.published
     });
-    setCoverImagePreview(event.imageUrl || '');
-    setCoverImageFile(null);
+setCoverImagePreview(event.imageUrl ? getImageUrl(event.imageUrl) : '');    setCoverImageFile(null);
     setShowEventForm(true);
   };
 
@@ -283,6 +304,90 @@ function AdminDashboard({ user }) {
     }
   };
 
+  const escapeCSV = (val) => {
+    const str = String(val ?? '');
+    if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+      return '"' + str.replace(/"/g, '""') + '"';
+    }
+    return str;
+  };
+
+  const handleExportMembersCSV = () => {
+    if (members.length === 0) {
+      alert('No members to export.');
+      return;
+    }
+
+    const headers = ['First Name', 'Last Name', 'Email', 'Phone', 'Province', 'City', 'Postal Code', 'Position', 'Wants Local Group', 'Status', 'Date Submitted'];
+    const rows = members.map(m => [
+      m.firstName,
+      m.lastName,
+      m.email,
+      m.phone,
+      m.province,
+      m.city,
+      m.postalCode,
+      m.position,
+      m.joinGroup ? 'Yes' : 'No',
+      m.status,
+      new Date(m.createdAt).toLocaleDateString('en-CA')
+    ]);
+
+    const csvContent = [headers, ...rows]
+      .map(row => row.map(escapeCSV).join(','))
+      .join('\n');
+
+    const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `afm-members-${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  // ---------- USER MANAGEMENT HANDLERS ----------
+  const handleCreateUser = async (e) => {
+    e.preventDefault();
+    setUserMessage({ type: '', text: '' });
+    setUserLoading(true);
+    try {
+      await userAPI.create(userForm);
+      setUserMessage({ type: 'success', text: `Account created for ${userForm.name}.` });
+      setUserForm(emptyUserForm);
+      setShowUserForm(false);
+      fetchUsers();
+    } catch (error) {
+      setUserMessage({
+        type: 'error',
+        text: error.response?.data?.message || 'Failed to create user.'
+      });
+    } finally {
+      setUserLoading(false);
+    }
+  };
+
+  const handleToggleUserActive = async (id) => {
+    try {
+      await userAPI.toggleActive(id);
+      fetchUsers();
+    } catch (error) {
+      alert(error.response?.data?.message || 'Failed to update user');
+    }
+  };
+
+  const handleDeleteUser = async (id, name) => {
+    if (!confirm(`Remove ${name}'s access permanently?`)) return;
+    try {
+      await userAPI.delete(id);
+      fetchUsers();
+    } catch (error) {
+      alert(error.response?.data?.message || 'Failed to delete user');
+    }
+  };
+
   if (!user) return null;
 
   return (
@@ -308,6 +413,11 @@ function AdminDashboard({ user }) {
               <span className="tab-count">{members.filter(m => m.status === 'new').length}</span>
             )}
           </button>
+          {isAdmin && (
+            <button className={`tab-btn ${activeTab === 'team' ? 'active' : ''}`} onClick={() => { setActiveTab('team'); fetchUsers(); }}>
+              👥 Team
+            </button>
+          )}
           <button className={`tab-btn ${activeTab === 'stats' ? 'active' : ''}`} onClick={() => setActiveTab('stats')}>
             📊 Statistics
           </button>
@@ -532,9 +642,9 @@ function AdminDashboard({ user }) {
               ) : (
                 events.map(event => (
                   <div key={event._id} className="blog-item event-item">
-                    {event.imageUrl && (
-                      <img src={event.imageUrl} alt={event.title} className="event-thumb" />
-                    )}
+                   {event.imageUrl && (
+  <img src={getImageUrl(event.imageUrl)} alt={event.title} className="event-thumb" />
+)}
                     <div className="blog-item-header">
                       <div>
                         <h3>{event.title}</h3>
@@ -570,21 +680,26 @@ function AdminDashboard({ user }) {
           <div className="tab-content">
             <div className="content-header">
               <h2>New Member Sign-Ups</h2>
-              <select
-                className="member-filter"
-                value={memberFilter}
-                onChange={(e) => setMemberFilter(e.target.value)}
-              >
-                <option value="">All Statuses</option>
-                <option value="new">New</option>
-                <option value="contacted">Contacted</option>
-                <option value="added">Added to Group</option>
-              </select>
+              <div className="content-header-actions">
+                <select
+                  className="member-filter"
+                  value={memberFilter}
+                  onChange={(e) => setMemberFilter(e.target.value)}
+                >
+                  <option value="">All Statuses</option>
+                  <option value="new">New</option>
+                  <option value="contacted">Contacted</option>
+                  <option value="added">Added to Group</option>
+                </select>
+                <button className="btn-secondary" onClick={handleExportMembersCSV}>
+                  ⬇ Export to CSV
+                </button>
+              </div>
             </div>
 
             <div className="blogs-list">
               {members.length === 0 ? (
-                <p className="no-data">No sign-ups yet. Submissions from the "Join Us" page will appear here.</p>
+                <p className="no-data">No sign-ups yet. Submissions from the "AFM Members in Canada" page will appear here.</p>
               ) : (
                 members.map(member => (
                   <div key={member._id} className="blog-item">
@@ -596,6 +711,9 @@ function AdminDashboard({ user }) {
                         </p>
                         <p className="blog-meta">
                           📍 {member.city}, {member.province} &nbsp;•&nbsp; {member.postalCode}
+                        </p>
+                        <p className="blog-meta">
+                          🎖️ {member.position}
                         </p>
                         <p className="blog-meta">
                           {member.joinGroup ? '✅ Wants to join a local group' : '➖ Did not request group placement'}
@@ -618,6 +736,101 @@ function AdminDashboard({ user }) {
                         )}
                         <button onClick={() => handleDeleteMember(member._id)} className="btn-small btn-delete">Delete</button>
                       </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* TEAM TAB (Admin only) */}
+        {isAdmin && activeTab === 'team' && (
+          <div className="tab-content">
+            <div className="content-header">
+              <h2>Manage Team Access</h2>
+              <button className="btn-primary" onClick={() => {
+                setShowUserForm(true);
+                setUserForm(emptyUserForm);
+                setUserMessage({ type: '', text: '' });
+              }}>
+                + Add Team Member
+              </button>
+            </div>
+
+            {showUserForm && (
+              <div className="blog-form-container">
+                <h3>Create New Account</h3>
+
+                {userMessage.text && (
+                  <div className={userMessage.type === 'error' ? 'error-message' : 'success-message'}>
+                    {userMessage.text}
+                  </div>
+                )}
+
+                <form onSubmit={handleCreateUser} className="blog-form">
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label>Full Name *</label>
+                      <input type="text" value={userForm.name} onChange={(e) => setUserForm({ ...userForm, name: e.target.value })} required />
+                    </div>
+                    <div className="form-group">
+                      <label>Email *</label>
+                      <input type="email" value={userForm.email} onChange={(e) => setUserForm({ ...userForm, email: e.target.value })} required />
+                    </div>
+                  </div>
+
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label>Temporary Password *</label>
+                      <input type="password" value={userForm.password} onChange={(e) => setUserForm({ ...userForm, password: e.target.value })} minLength="6" required />
+                    </div>
+                    <div className="form-group">
+                      <label>Role</label>
+                      <select value={userForm.role} onChange={(e) => setUserForm({ ...userForm, role: e.target.value })}>
+                        <option value="editor">Editor (can manage blogs/events/members)</option>
+                        <option value="admin">Admin (full access, including team management)</option>
+                        <option value="viewer">Viewer (read-only)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="form-actions">
+                    <button type="submit" className="btn-primary" disabled={userLoading}>
+                      {userLoading ? 'Creating...' : 'Create Account'}
+                    </button>
+                    <button type="button" className="btn-secondary" onClick={() => setShowUserForm(false)}>
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+
+            <div className="blogs-list">
+              {users.length === 0 ? (
+                <p className="no-data">No team members yet besides you.</p>
+              ) : (
+                users.map(u => (
+                  <div key={u._id} className="blog-item">
+                    <div className="blog-item-header">
+                      <div>
+                        <h3>{u.name} {u._id === user.id && <span className="badge featured">You</span>}</h3>
+                        <p className="blog-meta">
+                          {u.email} &nbsp;•&nbsp; role: {u.role}
+                          <span className={`badge ${u.active ? 'published' : 'draft'}`}>
+                            {u.active ? 'Active' : 'Deactivated'}
+                          </span>
+                        </p>
+                      </div>
+                      {u._id !== user.id && (
+                        <div className="blog-actions">
+                          <button onClick={() => handleToggleUserActive(u._id)} className="btn-small btn-toggle">
+                            {u.active ? 'Deactivate' : 'Reactivate'}
+                          </button>
+                          <button onClick={() => handleDeleteUser(u._id, u.name)} className="btn-small btn-delete">Delete</button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))
@@ -659,6 +872,12 @@ function AdminDashboard({ user }) {
                 <div className="stat-value">{members.filter(m => m.status === 'new').length}</div>
                 <div className="stat-label">Awaiting Follow-Up</div>
               </div>
+              {isAdmin && (
+                <div className="stat-card">
+                  <div className="stat-value">{users.length + 1}</div>
+                  <div className="stat-label">Team Members</div>
+                </div>
+              )}
             </div>
           </div>
         )}

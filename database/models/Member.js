@@ -8,6 +8,7 @@ const memberSchema = new mongoose.Schema({
   province: { type: String, required: true, trim: true },
   city: { type: String, required: true, trim: true },
   postalCode: { type: String, required: true, trim: true, uppercase: true },
+   position: { type: String, required: true, trim: true },
   joinGroup: { type: Boolean, default: true },
   status: {
     type: String,

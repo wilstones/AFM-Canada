@@ -35,7 +35,7 @@ function Navbar({ user, setUser }) {
             <li><Link to="/about" onClick={() => setMobileMenuOpen(false)}>About Us</Link></li>
             <li><Link to="/blog" onClick={() => setMobileMenuOpen(false)}>Blog</Link></li>
             <li><Link to="/events" onClick={() => setMobileMenuOpen(false)}>Events</Link></li>
-            <li><Link to="/join-us" onClick={() => setMobileMenuOpen(false)}>Join Us</Link></li>
+			<li><Link to="/join-us" onClick={() => setMobileMenuOpen(false)}>AFM Members in Canada</Link></li>
             <li><Link to="/contact" onClick={() => setMobileMenuOpen(false)}>Contact</Link></li>
             {user ? (
               <>

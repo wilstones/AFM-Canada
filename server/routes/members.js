@@ -7,9 +7,9 @@ const router = express.Router();
 // Public: submit new member interest form
 router.post('/', async (req, res) => {
   try {
-    const { firstName, lastName, email, phone, province, city, postalCode, joinGroup } = req.body;
+    const { firstName, lastName, email, phone, province, city, postalCode, position, joinGroup } = req.body;
 
-    if (!firstName || !lastName || !email || !phone || !province || !city || !postalCode) {
+    if (!firstName || !lastName || !email || !phone || !province || !city || !postalCode || !position) {
       return res.status(400).json({
         success: false,
         message: 'Please fill in all required fields'
@@ -25,7 +25,7 @@ router.post('/', async (req, res) => {
     }
 
     const member = new Member({
-      firstName, lastName, email, phone, province, city, postalCode,
+      firstName, lastName, email, phone, province, city, postalCode, position,
       joinGroup: joinGroup !== undefined ? joinGroup : true
     });
 
