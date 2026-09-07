@@ -54,6 +54,7 @@ const emptyForm = {
 };
 
 const postalRegex = /^[ABCEGHJKLMNPRSTVXY]\d[A-Z]\s?\d[A-Z]\d$/i;
+const phoneRegex = /^(\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/;
 
 function JoinUs() {
   const [form, setForm] = useState(emptyForm);
@@ -97,6 +98,10 @@ function JoinUs() {
 
     if (!postalRegex.test(form.postalCode.trim())) {
       setStatus({ type: 'error', text: 'Please enter a valid Canadian postal code (e.g. L8W 3S2).' });
+      return;
+    }
+	if (!phoneRegex.test(form.phone.trim())) {
+      setStatus({ type: 'error', text: 'Please enter a valid phone number (e.g. (613) 555-0123).' });
       return;
     }
 

@@ -125,3 +125,33 @@
     font-size: 1.75rem;
   }
 }
+.content-header-actions input.member-filter {
+  padding: 0.6rem 1rem;
+  border: 2px solid var(--accent);
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  min-width: 200px;
+}
+.blog-content-editor {
+  background: white;
+  border-radius: 8px;
+}
+
+.blog-content-editor .ql-toolbar {
+  border-radius: 8px 8px 0 0;
+  border-color: var(--accent);
+  background: var(--light);
+}
+
+.blog-content-editor .ql-container {
+  border-radius: 0 0 8px 8px;
+  border-color: var(--accent);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  min-height: 250px;
+}
+
+.blog-content-editor .ql-editor {
+  min-height: 250px;
+}

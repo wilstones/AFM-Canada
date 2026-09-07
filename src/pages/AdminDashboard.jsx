@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authAPI, blogAPI, eventAPI, memberAPI, userAPI, getImageUrl } from '../utils/api';import './AdminDashboard.css';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 const emptyEventForm = {
   title: '',
   description: '',
@@ -23,7 +25,17 @@ function AdminDashboard({ user }) {
   const [members, setMembers] = useState([]);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  const [memberProvinceFilter, setMemberProvinceFilter] = useState('');
+  const [memberSearchFilter, setMemberSearchFilter] = useState('');  
+const quillModules = {
+  toolbar: [
+    [{ header: [2, 3, false] }],
+    ['bold', 'italic', 'underline'],
+    [{ list: 'ordered' }, { list: 'bullet' }],
+    ['blockquote', 'link'],
+    ['clean']
+  ]
+};
   // Blog form state
   const [showBlogForm, setShowBlogForm] = useState(false);
   const [editingBlog, setEditingBlog] = useState(null);
@@ -111,6 +123,17 @@ function AdminDashboard({ user }) {
       console.error('Failed to fetch users:', error);
     }
   };
+  const getFilteredMembers = () => {
+  return members.filter((m) => {
+    const matchesProvince = !memberProvinceFilter || m.province === memberProvinceFilter;
+    const matchesSearch =
+      !memberSearchFilter ||
+      `${m.firstName} ${m.lastName} ${m.email}`.toLowerCase().includes(memberSearchFilter.toLowerCase());
+    return matchesProvince && matchesSearch;
+  });
+};
+
+const memberProvinces = [...new Set(members.map((m) => m.province))].sort();
 
   // ---------- BLOG HANDLERS ----------
   const handleBlogSubmit = async (e) => {
@@ -461,8 +484,14 @@ setCoverImagePreview(event.imageUrl ? getImageUrl(event.imageUrl) : '');    setC
                   </div>
 
                   <div className="form-group">
-                    <label>Content * (HTML supported)</label>
-                    <textarea value={blogForm.content} onChange={(e) => setBlogForm({ ...blogForm, content: e.target.value })} rows="12" required />
+                    <label>Content *</label>
+                    <ReactQuill
+                      theme="snow"
+                      value={blogForm.content}
+                      onChange={(html) => setBlogForm({ ...blogForm, content: html })}
+                      modules={quillModules}
+                      className="blog-content-editor"
+                    />
                   </div>
 
                   <div className="form-row">
@@ -681,6 +710,13 @@ setCoverImagePreview(event.imageUrl ? getImageUrl(event.imageUrl) : '');    setC
             <div className="content-header">
               <h2>New Member Sign-Ups</h2>
               <div className="content-header-actions">
+                <input
+                  type="text"
+                  className="member-filter"
+                  placeholder="Search name or email..."
+                  value={memberSearchFilter}
+                  onChange={(e) => setMemberSearchFilter(e.target.value)}
+                />
                 <select
                   className="member-filter"
                   value={memberFilter}
@@ -691,6 +727,16 @@ setCoverImagePreview(event.imageUrl ? getImageUrl(event.imageUrl) : '');    setC
                   <option value="contacted">Contacted</option>
                   <option value="added">Added to Group</option>
                 </select>
+                <select
+                  className="member-filter"
+                  value={memberProvinceFilter}
+                  onChange={(e) => setMemberProvinceFilter(e.target.value)}
+                >
+                  <option value="">All Provinces</option>
+                  {memberProvinces.map((p) => (
+                    <option key={p} value={p}>{p}</option>
+                  ))}
+                </select>
                 <button className="btn-secondary" onClick={handleExportMembersCSV}>
                   ⬇ Export to CSV
                 </button>
@@ -698,10 +744,10 @@ setCoverImagePreview(event.imageUrl ? getImageUrl(event.imageUrl) : '');    setC
             </div>
 
             <div className="blogs-list">
-              {members.length === 0 ? (
-                <p className="no-data">No sign-ups yet. Submissions from the "AFM Members in Canada" page will appear here.</p>
+              {getFilteredMembers().length === 0 ? (
+                <p className="no-data">No sign-ups match your filters.</p>
               ) : (
-                members.map(member => (
+                getFilteredMembers().map(member => (
                   <div key={member._id} className="blog-item">
                     <div className="blog-item-header">
                       <div>

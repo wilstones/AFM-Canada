@@ -41,7 +41,7 @@ function Footer() {
       </div>
 
       <div className="footer-bottom">
-        <p>&copy; {new Date().getFullYear()} AFM in Canada - Hamilton Assembly. All Rights Reserved.</p>
+        <p>&copy; 2017 AFM in Canada - Hamilton Assembly. All Rights Reserved.</p>
       </div>
     </footer>
   );
